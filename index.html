@@ -5,30 +5,47 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-        .container {
-            position: relative;
-            height: 100vh;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 10px 20px;
+        body {
+            /* Fallback and dynamic viewport height fix for landscape mode */
+            min-height: 100vh;
+            min-height: 100dvh; 
+            display: grid;
+            place-items: center;
+            background-color: #f9f9f9;
+        }
+
+        .puzzle-link {
+            text-decoration: none;
+        }
+
+        .puzzle-btn {
+            padding: 12px 24px;
             font-size: 16px;
             background-color: #FFA500;
             color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
+            font-weight: bold;
+        }
+
+        .puzzle-btn:hover {
+            background-color: #e69500;
         }
     </style>
     <title>Positioning Centering</title>
 </head>
 
 <body>
- <a href="CLERK PUZZLE SET -1.html ">   <div class="container">
-        <button>PRACTICE CLERK PUZZLE - CLICK HERE</button>
-    </div><a/>
+    <a href="CLERK PUZZLE SET -1.html" class="puzzle-link">
+        <button type="button" class="puzzle-btn">PRACTICE CLERK PUZZLE - CLICK HERE</button>
+    </a>
 </body>
 
 </html>
