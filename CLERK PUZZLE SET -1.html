@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Practice Quiz</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="screen-orientation" content="landscape">
+<meta name="x5-orientation" content="landscape">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================================
+   THEME
+   ========================================================================== */
+:root{
+  --navy:#1E2B4F;
+  --navy-2:#34477A;
+  --navy-tint:#E9EEF8;
+  --gold:#8F6618;
+  --gold-tint:#F6EEDC;
+  --paper:#EFF2F7;
+  --card:#FFFFFF;
+  --line:#D9DFEA;
+  --ink:#1B2233;
+  --muted:#5B6579;
+  --good:#237A4B;
+  --good-tint:#E4F4EB;
+  --bad:#B3372B;
+  --bad-tint:#FBE8E5;
+  --serif:'Libre Baskerville', Georgia, 'Times New Roman', serif;
+  --sans:'Nunito Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --shadow:0 1px 2px rgba(30,43,79,.06), 0 10px 28px rgba(30,43,79,.07);
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0; height:100%; overflow:hidden; background:var(--paper);
+  overscroll-behavior:none; touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  font-size:16px; /* JS rescales this to fit the screen */
+}
+body{font-family:var(--sans); color:var(--ink)}
+button{font-family:inherit}
+:focus-visible{outline:3px solid #7D9BD6; outline-offset:2px}
+
+/* The app is always laid out as a landscape canvas. In portrait it is rotated by JS. */
+#app{position:fixed; left:0; top:0; transform-origin:0 0; overflow:hidden; background:var(--paper)}
+
+/* ==========================================================================
+   SCREENS + TOP BAR
+   ========================================================================== */
+.screen{position:absolute; inset:0; display:none; flex-direction:column}
+.screen.active{display:flex; animation:fade .35s ease}
+.topbar{
+  flex:none; height:3.6rem; display:flex; align-items:center; justify-content:space-between;
+  padding:0 1.4rem; background:var(--card); border-bottom:1px solid var(--line);
+}
+.title{margin:0; font:700 1.25rem/1.2 var(--serif); color:var(--navy)}
+.title .tag{font-weight:400; color:var(--muted)}
+.timer{
+  display:flex; align-items:center; gap:.55rem; padding:.4rem 1rem; border-radius:999px;
+  background:var(--navy-tint); color:var(--navy); font-weight:800; font-size:1.2rem;
+  font-variant-numeric:tabular-nums; transition:background .3s, color .3s;
+}
+.timer svg{width:1.15rem; height:1.15rem}
+.timer.low{background:var(--bad-tint); color:var(--bad)}
+
+.body{
+  flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; padding:1.2rem 1.4rem;
+}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:1rem; box-shadow:var(--shadow);
+  min-height:0; display:flex; flex-direction:column; overflow:hidden;
+}
+.card-head{
+  flex:none; display:flex; align-items:center; gap:.7rem; padding:1rem 1.4rem; border-bottom:1px solid var(--line);
+}
+.card-head h2{margin:0; font:700 1.1rem/1.2 var(--serif); color:var(--navy)}
+.card-head svg{width:1.3rem; height:1.3rem; color:var(--gold)}
+.scroll{flex:1; min-height:0; overflow:auto; padding:1.4rem}
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+.btn{
+  font-weight:800; font-size:1rem; padding:.72rem 1.5rem; border-radius:.6rem; border:1.5px solid transparent;
+  cursor:pointer; transition:transform .15s, box-shadow .15s, background .15s, border-color .15s;
+}
+.btn:hover:not(:disabled){transform:translateY(-1px); box-shadow:0 6px 14px rgba(30,43,79,.16)}
+.btn:active:not(:disabled){transform:translateY(0); box-shadow:none}
+.btn:disabled{opacity:.4; cursor:not-allowed}
+.btn-primary{background:var(--navy); color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--navy-2)}
+.btn-ghost{background:#fff; color:var(--navy); border-color:var(--line)}
+.btn-ghost:hover:not(:disabled){border-color:var(--navy-2)}
+.btn-gold{background:var(--gold); color:#fff}
+.btn-gold:hover:not(:disabled){background:#7A550F}
+.foot{
+  flex:none; display:flex; align-items:center; gap:.8rem; padding:1rem 1.4rem;
+  border-top:1px solid var(--line); background:#FAFBFD;
+}
+.foot .spacer{flex:1}
+
+/* ==========================================================================
+   SET INTRO
+   ========================================================================== */
+.intro{align-items:center; justify-content:center}
+.intro-card{
+  background:var(--card); border:1px solid var(--line); border-radius:1.2rem; box-shadow:var(--shadow);
+  padding:2.6rem 3.4rem; text-align:center; width:min(34rem, 88%); animation:pop .5s cubic-bezier(.2,.9,.3,1.1);
+}
+.intro-card h1{margin:0 0 .6rem; font:700 2.6rem/1.15 var(--serif); color:var(--navy)}
+.intro-card h1 .tag{color:var(--gold)}
+.intro-card p{margin:0; color:var(--muted); font-size:1.1rem}
+.intro-bar{height:.4rem; background:var(--navy-tint); border-radius:999px; overflow:hidden; margin:1.8rem 0 .8rem}
+.intro-bar i{display:block; height:100%; width:0; background:var(--gold); border-radius:999px}
+.intro-bar.run i{animation:fill linear forwards}
+.intro-note{font-size:.95rem !important}
+
+/* ==========================================================================
+   QUIZ SCREEN
+   ========================================================================== */
+.instr-text{
+  margin:0; font:400 1.45rem/1.65 var(--serif); color:var(--ink);
+  border-left:3px solid var(--gold); padding-left:1.1rem;
+}
+.facts{margin:0; padding:1rem 1.4rem; border-top:1px solid var(--line); background:#FAFBFD; display:grid; gap:.55rem}
+.facts div{display:flex; justify-content:space-between; gap:1rem; font-size:.98rem}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0; font-weight:700; color:var(--navy); text-align:right}
+
+.q-head{
+  flex:none; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  padding:.9rem 1.4rem; border-bottom:1px solid var(--line);
+}
+.q-head h2{margin:0; font:700 1.1rem/1.2 var(--serif); color:var(--navy)}
+.dots{display:flex; flex-wrap:wrap; gap:.4rem; justify-content:flex-end}
+.dot{
+  width:1.9rem; height:1.9rem; border-radius:50%; border:1.5px solid var(--line); background:#fff; color:var(--muted);
+  font-weight:700; font-size:.85rem; cursor:pointer; padding:0; transition:background .15s, border-color .15s, color .15s;
+}
+.dot:hover{border-color:var(--navy-2)}
+.dot.answered{background:var(--navy-tint); border-color:var(--navy-2); color:var(--navy)}
+.dot.current{background:var(--navy); border-color:var(--navy); color:#fff}
+
+.q-text{margin:0 0 1.3rem; font:400 1.55rem/1.5 var(--serif); color:var(--ink)}
+.opts{display:grid; gap:.7rem}
+.opt{
+  display:flex; align-items:center; gap:.95rem; width:100%; text-align:left; padding:.8rem 1rem;
+  background:#fff; border:1.5px solid var(--line); border-radius:.7rem; font-size:1.08rem; color:var(--ink);
+  cursor:pointer; transition:border-color .15s, background .15s, transform .15s;
+}
+.opt:hover{border-color:var(--navy-2); background:#F7F9FC}
+.opt:active{transform:scale(.99)}
+.badge{
+  flex:none; width:2.05rem; height:2.05rem; border-radius:50%; display:grid; place-items:center;
+  border:1.5px solid var(--line); background:#fff; color:var(--navy); font-weight:800; font-size:.92rem;
+  transition:background .15s, color .15s, border-color .15s;
+}
+.opt.selected{border-color:var(--navy); background:var(--navy-tint)}
+.opt.selected .badge{background:var(--navy); border-color:var(--navy); color:#fff}
+.swap-next{animation:slideNext .28s ease}
+.swap-prev{animation:slidePrev .28s ease}
+
+/* ==========================================================================
+   SOLUTION SCREEN
+   ========================================================================== */
+.img-wrap{position:relative; min-height:10rem; border-radius:.8rem; overflow:hidden; background:var(--navy-tint); margin-bottom:1.5rem}
+.img-wrap img{display:block; width:100%; max-height:20rem; object-fit:contain; opacity:0; transition:opacity .45s}
+.img-wrap.loaded img{opacity:1}
+.img-wrap.failed img{display:none}
+.loader{position:absolute; inset:0; display:grid; place-items:center}
+.img-wrap.loaded .loader, .img-wrap.failed .loader{display:none}
+.ring{width:3.4rem; height:3.4rem; animation:spin 1.1s linear infinite}
+.ring circle{fill:none; stroke-width:4}
+.ring .bg{stroke:#C9D3E8}
+.ring .fg{stroke:var(--navy); stroke-linecap:round; stroke-dasharray:70 56}
+.img-error{position:absolute; inset:0; display:none; place-items:center; padding:1rem; text-align:center; color:var(--muted)}
+.img-wrap.failed .img-error{display:grid}
+.sec{margin:0 0 1.5rem}
+.sec:last-child{margin-bottom:0}
+.sec h3{margin:0 0 .5rem; font:700 1.05rem/1.2 var(--serif); color:var(--navy)}
+.sec p{margin:0; font-size:1.05rem; line-height:1.7}
+.sec .instr-text{font-size:1.15rem}
+
+.score-wrap{flex:1; min-height:0; overflow:auto; padding:1.6rem 1.6rem 1rem; display:flex; flex-direction:column; justify-content:center; gap:1.4rem}
+.score-lead{margin:0; text-align:center; color:var(--muted); font-size:1.05rem}
+.big-score{text-align:center; font:700 4.4rem/1 var(--serif); color:var(--navy)}
+.big-score .of{font-size:1.5rem; color:var(--muted); font-weight:400; margin-left:.4rem}
+.marks{display:flex; justify-content:center; gap:.7rem; flex-wrap:wrap}
+.chip{padding:.35rem .9rem; border-radius:999px; font-weight:700; font-size:.92rem}
+.chip.plus{background:var(--good-tint); color:var(--good)}
+.chip.minus{background:var(--bad-tint); color:var(--bad)}
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:.8rem}
+.stat{border:1px solid var(--line); border-top-width:4px; border-radius:.8rem; padding:.9rem .6rem; text-align:center; background:#fff}
+.stat b{display:block; font:700 2.1rem/1.1 var(--serif); color:var(--ink)}
+.stat span{color:var(--muted); font-size:.95rem}
+.stat.good{border-top-color:var(--good)}
+.stat.bad{border-top-color:var(--bad)}
+.stat.skip{border-top-color:#9AA4B8}
+
+/* ==========================================================================
+   FINAL SCREEN
+   ========================================================================== */
+.final-wrap{flex:1; min-height:0; display:flex; align-items:center; justify-content:center; padding:1.2rem}
+.final-card{width:min(44rem,100%); max-height:100%; padding:1.8rem 2rem; overflow:auto; align-items:stretch}
+.final-table{width:100%; border-collapse:collapse; margin:1.3rem 0 1.6rem; font-size:1.02rem}
+.final-table th, .final-table td{padding:.65rem .5rem; text-align:center; border-bottom:1px solid var(--line)}
+.final-table th{color:var(--muted); font-weight:600}
+.final-table td:first-child, .final-table th:first-child{text-align:left; font-weight:700; color:var(--navy)}
+.final-table tfoot td{border-bottom:0; font-weight:800; color:var(--navy)}
+
+/* ==========================================================================
+   MODALS
+   ========================================================================== */
+.modal{position:absolute; inset:0; z-index:50; display:none; align-items:center; justify-content:center; padding:1.2rem; background:rgba(27,34,51,.5)}
+.modal.open{display:flex; animation:fade .2s ease}
+.modal-card{
+  background:#fff; border-radius:1rem; width:min(29rem,100%); padding:1.8rem;
+  box-shadow:0 24px 64px rgba(27,34,51,.32); animation:pop .28s cubic-bezier(.2,.9,.3,1.15);
+}
+.modal-card h2{margin:0 0 .6rem; font:700 1.4rem/1.25 var(--serif); color:var(--navy)}
+.modal-card p{margin:0 0 1.5rem; line-height:1.6; color:var(--muted); font-size:1.05rem}
+.modal-actions{display:flex; justify-content:flex-end; gap:.8rem}
+.modal-card.wide{width:min(56rem,100%); max-height:100%; padding:0; display:flex; flex-direction:column; overflow:hidden}
+.modal-head{flex:none; display:flex; align-items:center; justify-content:space-between; padding:1rem 1.4rem; border-bottom:1px solid var(--line)}
+.modal-head h2{margin:0}
+.modal-body{flex:1; min-height:0; overflow:auto; padding:1.2rem 1.4rem; display:grid; gap:1.1rem; background:var(--paper)}
+
+.rv{background:#fff; border:1px solid var(--line); border-radius:.9rem; padding:1.2rem 1.3rem}
+.rv-top{display:flex; align-items:flex-start; gap:.8rem; margin-bottom:.9rem}
+.rv-n{flex:none; font:700 1.05rem/1.5 var(--serif); color:var(--gold)}
+.rv-q{flex:1; font:400 1.15rem/1.55 var(--serif)}
+.pill{flex:none; padding:.2rem .75rem; border-radius:999px; font-weight:800; font-size:.85rem}
+.pill.good{background:var(--good-tint); color:var(--good)}
+.pill.bad{background:var(--bad-tint); color:var(--bad)}
+.pill.skip{background:#ECEFF5; color:var(--muted)}
+.rv-opts{list-style:none; margin:0 0 .9rem; padding:0; display:grid; gap:.45rem}
+.rv-opts li{display:flex; align-items:center; gap:.75rem; padding:.55rem .8rem; border:1.5px solid var(--line); border-radius:.6rem; font-size:1rem}
+.rv-opts li .badge{width:1.75rem; height:1.75rem; font-size:.82rem}
+.rv-opts li .txt{flex:1}
+.rv-opts li em{font-style:normal; font-weight:800; font-size:.85rem}
+.rv-opts li.is-correct{background:var(--good-tint); border-color:var(--good)}
+.rv-opts li.is-correct em{color:var(--good)}
+.rv-opts li.is-wrong{background:var(--bad-tint); border-color:var(--bad)}
+.rv-opts li.is-wrong em{color:var(--bad)}
+.rv-exp{background:var(--gold-tint); border-radius:.6rem; padding:.8rem 1rem; font-size:1rem; line-height:1.65}
+.rv-exp b{font-family:var(--serif); color:var(--gold)}
+
+/* ==========================================================================
+   MOTION
+   ========================================================================== */
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0; transform:translateY(.8rem) scale(.97)}to{opacity:1; transform:none}}
+@keyframes slideNext{from{opacity:0; transform:translateX(1.3rem)}to{opacity:1; transform:none}}
+@keyframes slidePrev{from{opacity:0; transform:translateX(-1.3rem)}to{opacity:1; transform:none}}
+@keyframes fill{to{width:100%}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){
+  .screen.active, .modal.open, .modal-card, .intro-card, .swap-next, .swap-prev{animation:none}
+  .btn, .opt, .dot, .badge, .img-wrap img{transition:none}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ======================================================================
+     QUESTION DATA  (edit this block only to change the quiz)
+     ======================================================================
+     Each set has:
+       timer         seconds allowed for the set
+       instruction   shown on the left half while answering (same for every question in the set)
+       solutionImg   image URL shown on the solution screen (leave "" to hide it)
+       solutionExp   main explanation shown on the solution screen
+       questions[]   { q: question text,
+                       opt: [option texts],           any number of options (A, B, C ...)
+                       ans: "D",                       letter of the correct option
+                       exp: individual explanation }
+     Text may contain simple HTML such as <b>, <i>, <br>, <sup>.
+     Progress is saved in the browser. If you change the number of sets, questions or timers,
+     the saved progress is cleared automatically on the next load.
+     ====================================================================== -->
+<script>
+const CONFIG = {
+  pageId: "",                     // leave "" to use this file's name automatically (quiz1.html -> "quiz1").
+                                  // Set your own text (e.g. "maths-test-3") to force a specific id.
+  markCorrect: 1,                 // score for a correct answer
+  markWrong: -0.25,               // score for a wrong answer
+  introMs: 2400,                  // how long the "Set 1 of 3" screen shows before the timer starts
+  timerContinuesWhenClosed: false // false: timer pauses while the page is closed
+                                  // true : timer keeps running in real time while the page is closed
+};
+
+// Placeholder picture so the demo works offline. Replace with your own image URLs.
+const demoImg = (label) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">' +
+  '<rect width="800" height="400" fill="#E9EEF8"/>' +
+  '<rect x="24" y="24" width="752" height="352" rx="14" fill="none" stroke="#B9C6E2" stroke-width="2" stroke-dasharray="8 8"/>' +
+  '<text x="400" y="190" text-anchor="middle" font-family="Georgia,serif" font-size="34" fill="#1E2B4F">' + label + '</text>' +
+  '<text x="400" y="235" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="#5B6579">Replace with your solution image URL</text></svg>'
+);
+
+const QUIZ_SETS = [
+  /* ---------------------------- SET 1 ---------------------------- */
+  {
+    timer: 180,
+    instruction: "Read the following question carefully and answer the question.",
+    solutionImg: demoImg("Set 1 solution image"),
+    solutionExp: "This set mixes general awareness, number series, classification, coding-decoding and vocabulary. For each type, find the rule first (the size, the gap between numbers, the shared category, the letter shift, the meaning) and only then compare the options.",
+    questions: [
+      {
+        q: "Which of the following is the largest ocean on Earth?",
+        opt: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean", "Southern Ocean"],
+        ans: "D",
+        exp: "The Pacific Ocean covers about one third of the Earth's surface, more than all the land combined."
+      },
+      {
+        q: "Complete the series: 2, 6, 12, 20, 30, ?",
+        opt: ["36", "40", "42", "44", "48"],
+        ans: "C",
+        exp: "The differences are 4, 6, 8, 10, so the next difference is 12. 30 + 12 = 42. (The terms are n × (n + 1).)"
+      },
+      {
+        q: "Which word is the odd one out?",
+        opt: ["Apple", "Mango", "Carrot", "Banana", "Grapes"],
+        ans: "C",
+        exp: "Apple, mango, banana and grapes are fruits. Carrot is a vegetable."
+      },
+      {
+        q: "If FRIEND is written as GSJFOE, how is SCHOOL written in the same code?",
+        opt: ["TDIPPM", "TDIOPM", "RBGNNK", "TDHPPM", "UEKQQN"],
+        ans: "A",
+        exp: "Each letter moves one step forward: F→G, R→S, I→J, E→F, N→O, D→E. Applying this to SCHOOL gives T-D-I-P-P-M."
+      },
+      {
+        q: "Choose the word closest in meaning to <b>RAPID</b>.",
+        opt: ["Slow", "Swift", "Gentle", "Heavy", "Silent"],
+        ans: "B",
+        exp: "Rapid means happening quickly. Swift is the closest synonym; slow is its opposite."
+      }
+    ]
+  },
+
+  /* ---------------------------- SET 2 ---------------------------- */
+  {
+    timer: 240,
+    instruction: "Solve the problems.",
+    solutionImg: demoImg("Set 2 solution image"),
+    solutionExp: "All four problems use a single formula each: speed = distance ÷ time, percentage = part ÷ whole × 100, simple interest = P × R × T ÷ 100, and average = sum ÷ count. Write the formula down, substitute the values, then check the units.",
+    questions: [
+      {
+        q: "A train 150 m long passes a pole in 15 seconds. What is its speed in km/h?",
+        opt: ["30 km/h", "36 km/h", "40 km/h", "45 km/h", "54 km/h"],
+        ans: "B",
+        exp: "Speed = 150 ÷ 15 = 10 m/s. Multiply by 18/5 to convert to km/h: 10 × 3.6 = 36 km/h."
+      },
+      {
+        q: "If 15% of a number x is 45, what is x?",
+        opt: ["200", "250", "300", "350", "400"],
+        ans: "C",
+        exp: "0.15 × x = 45, so x = 45 ÷ 0.15 = 300."
+      },
+      {
+        q: "What is the simple interest on ₹5000 at 8% per annum for 3 years?",
+        opt: ["₹1000", "₹1200", "₹1400", "₹1500", "₹1600"],
+        ans: "B",
+        exp: "SI = P × R × T ÷ 100 = 5000 × 8 × 3 ÷ 100 = ₹1200."
+      },
+      {
+        q: "What is the average of the first five prime numbers?",
+        opt: ["5", "5.2", "5.6", "6", "6.4"],
+        ans: "C",
+        exp: "The first five primes are 2, 3, 5, 7, 11. Their sum is 28, and 28 ÷ 5 = 5.6."
+      }
+    ]
+  },
+
+  /* ---------------------------- SET 3 (last) ---------------------------- */
+  {
+    timer: 120,
+    instruction: "Read the following question carefully and answer the question.",
+    solutionImg: demoImg("Set 3 solution image"),
+    solutionExp: "These are quick recall questions. If you are unsure, remove the options you know are wrong first: with only three choices, eliminating one already gives you a fifty-fifty guess.",
+    questions: [
+      {
+        q: "What is the capital city of Australia?",
+        opt: ["Sydney", "Canberra", "Melbourne"],
+        ans: "B",
+        exp: "Canberra is the capital. Sydney and Melbourne are larger, better-known cities, which is why they are common wrong answers."
+      },
+      {
+        q: "Which is the smallest prime number?",
+        opt: ["1", "2", "3"],
+        ans: "B",
+        exp: "A prime number has exactly two factors. 1 has only one factor, so 2 is the smallest prime."
+      },
+      {
+        q: "At what temperature (in °C) does water boil at sea level?",
+        opt: ["90", "100", "110"],
+        ans: "B",
+        exp: "Pure water boils at 100 °C at standard sea-level pressure."
+      },
+      {
+        q: "Choose the word opposite in meaning to <b>ANCIENT</b>.",
+        opt: ["Modern", "Old", "Historic"],
+        ans: "A",
+        exp: "Ancient means very old. Modern is its opposite; old and historic are similar in meaning."
+      },
+      {
+        q: "How many days are there in a leap year?",
+        opt: ["364", "365", "366"],
+        ans: "C",
+        exp: "A leap year has one extra day, 29 February, making 366 days."
+      }
+    ]
+  }
+];
+</script>
+
+
+<!-- ======================================================================
+     PAGE
+     ====================================================================== -->
+<div id="app">
+
+  <!-- Set intro -->
+  <section id="introScreen" class="screen intro" aria-live="polite">
+    <div class="intro-card">
+      <h1 id="introTitle"></h1>
+      <p id="introSub"></p>
+      <div class="intro-bar" id="introBar"><i></i></div>
+      <p class="intro-note">The timer starts when the bar fills.</p>
+    </div>
+  </section>
+
+  <!-- Quiz -->
+  <section id="quizScreen" class="screen">
+    <header class="topbar">
+      <h1 class="title" id="quizTitle"></h1>
+      <div class="timer" id="timerBox" role="timer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>
+        <span id="timerText">00:00</span>
+      </div>
+    </header>
+
+    <div class="body">
+      <!-- Left half: instructions -->
+      <div class="card">
+        <div class="card-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20"/></svg>
+          <h2>Instructions</h2>
+        </div>
+        <div class="scroll"><p class="instr-text" id="instrText"></p></div>
+        <dl class="facts" id="facts"></dl>
+      </div>
+
+      <!-- Right half: question + options -->
+      <div class="card">
+        <div class="q-head">
+          <h2 id="qCount"></h2>
+          <div class="dots" id="dots"></div>
+        </div>
+        <div class="scroll" id="qBody">
+          <p class="q-text" id="qText"></p>
+          <div class="opts" id="optList"></div>
+        </div>
+        <div class="foot">
+          <button class="btn btn-ghost" id="prevBtn" type="button">Previous</button>
+          <span class="spacer"></span>
+          <button class="btn btn-primary" id="nextBtn" type="button">Next</button>
+          <button class="btn btn-gold" id="submitBtn" type="button">Submit</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution -->
+  <section id="solutionScreen" class="screen">
+    <header class="topbar"><h1 class="title" id="solTitle"></h1></header>
+    <div class="body">
+      <!-- Left half: image, instruction, explanation -->
+      <div class="card">
+        <div class="scroll">
+          <div class="img-wrap" id="imgWrap">
+            <div class="loader" aria-label="Loading solution image">
+              <svg class="ring" viewBox="0 0 50 50"><circle class="bg" cx="25" cy="25" r="20"/><circle class="fg" cx="25" cy="25" r="20"/></svg>
+            </div>
+            <div class="img-error">The solution image could not be loaded. Check the image URL.</div>
+            <img id="solImg" alt="Solution of the set">
+          </div>
+          <div class="sec">
+            <h3>Instructions</h3>
+            <p class="instr-text" id="solInstr"></p>
+          </div>
+          <div class="sec">
+            <h3>Explanation</h3>
+            <p id="solExp"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right half: score -->
+      <div class="card">
+        <div class="score-wrap">
+          <p class="score-lead">Your score</p>
+          <div class="big-score"><span id="scoreNum">0</span><span class="of" id="scoreOf"></span></div>
+          <div class="marks" id="marks"></div>
+          <div class="stats">
+            <div class="stat good"><b id="stCorrect">0</b><span>Correct</span></div>
+            <div class="stat bad"><b id="stWrong">0</b><span>Wrong</span></div>
+            <div class="stat skip"><b id="stSkipped">0</b><span>Skipped</span></div>
+          </div>
+        </div>
+        <div class="foot">
+          <button class="btn btn-ghost" id="showQBtn" type="button">Show Question</button>
+          <span class="spacer"></span>
+          <button class="btn btn-primary" id="nextSetBtn" type="button">Next Set</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final result -->
+  <section id="finalScreen" class="screen">
+    <header class="topbar"><h1 class="title">All sets complete</h1></header>
+    <div class="final-wrap">
+      <div class="card final-card">
+        <p class="score-lead">Your total score</p>
+        <div class="big-score"><span id="finalScore">0</span><span class="of" id="finalOf"></span></div>
+        <table class="final-table">
+          <thead><tr><th>Set</th><th>Correct</th><th>Wrong</th><th>Skipped</th><th>Score</th></tr></thead>
+          <tbody id="finalRows"></tbody>
+          <tfoot id="finalFoot"></tfoot>
+        </table>
+        <button class="btn btn-primary" id="restartBtn" type="button">Start over</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popup: confirm submit -->
+  <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="cfTitle" aria-hidden="true">
+    <div class="modal-card">
+      <h2 id="cfTitle">Submit this set?</h2>
+      <p id="cfText"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="cfNo" type="button" data-autofocus>No</button>
+        <button class="btn btn-primary" id="cfYes" type="button">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup: timer over (cannot be dismissed) -->
+  <div class="modal" id="timeModal" role="alertdialog" aria-modal="true" aria-labelledby="tmTitle" aria-hidden="true">
+    <div class="modal-card">
+      <h2 id="tmTitle">Time is over</h2>
+      <p>The timer for this set has ended. Submit to move to the solution page.</p>
+      <div class="modal-actions">
+        <button class="btn btn-gold" id="tmSubmit" type="button" data-autofocus>Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup: all questions review -->
+  <div class="modal" id="reviewModal" role="dialog" aria-modal="true" aria-labelledby="rvTitle" aria-hidden="true">
+    <div class="modal-card wide">
+      <div class="modal-head">
+        <h2 id="rvTitle">Questions and explanations</h2>
+        <button class="btn btn-ghost" id="rvClose" type="button" data-autofocus>Close</button>
+      </div>
+      <div class="modal-body" id="rvBody"></div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ======================================================================
+     APP LOGIC
+     ====================================================================== -->
+<script>
+(function () {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const app = $('app');
+  // Unique id for this page = its file name (without .html), so different quiz pages
+  // never share or overwrite each other's saved progress.
+  function getPageId() {
+    if (CONFIG.pageId && String(CONFIG.pageId).trim()) return String(CONFIG.pageId).trim();
+    let name = '';
+    try { name = decodeURIComponent(location.pathname.split('/').pop() || ''); } catch (e) { name = location.pathname.split('/').pop() || ''; }
+    name = name.replace(/\.[^.]+$/, '');                 // remove extension (.html, .htm ...)
+    if (!name) {                                          // e.g. site opened as ".../quiz/" -> use the folder name
+      const parts = location.pathname.split('/').filter(Boolean);
+      name = parts.length ? parts[parts.length - 1] : 'index';
+    }
+    return name;
+  }
+  const PAGE_ID = getPageId();
+  const STORAGE_KEY = 'practiceQuiz.' + PAGE_ID + '.progress.v1';
+  const SIGNATURE = QUIZ_SETS.map(s => s.timer + ':' + s.questions.map(q => q.opt.length).join('')).join('|');
+  const reducedMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ------------------------------------------------------------------
+     Always landscape: rotate the canvas when the phone is held upright
+     ------------------------------------------------------------------ */
+  function fitScreen() {
+    const w = window.innerWidth, h = window.innerHeight;
+    const portrait = h > w;
+    const ew = portrait ? h : w, eh = portrait ? w : h;
+    app.style.width = ew + 'px';
+    app.style.height = eh + 'px';
+    app.style.transform = portrait ? 'translateX(' + w + 'px) rotate(90deg)' : 'none';
+    document.documentElement.style.fontSize = Math.max(9.5, Math.min(ew / 78, eh / 40, 20)) + 'px';
+  }
+  window.addEventListener('resize', fitScreen);
+  window.addEventListener('orientationchange', () => setTimeout(fitScreen, 200));
+  fitScreen();
+
+  // Where the browser allows it, also ask the device to lock to landscape.
+  document.addEventListener('pointerdown', function () {
+    try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {}); } catch (e) {}
+  }, { once: true });
+
+  /* ------------------------------------------------------------------
+     Saved progress (localStorage, with an in-memory fallback)
+     ------------------------------------------------------------------ */
+  let state = null;
+  let memoryCopy = null;
+
+  function loadState() {
+    try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }
+    catch (e) { return memoryCopy; }
+  }
+  function saveState() {
+    state.savedAt = Date.now();
+    memoryCopy = JSON.parse(JSON.stringify(state));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function freshState() {
+    return { sig: SIGNATURE, set: 0, q: 0, phase: 'intro', remaining: QUIZ_SETS[0].timer, savedAt: Date.now(), answers: {} };
+  }
+  function validState(s) {
+    return s && s.sig === SIGNATURE && Number.isInteger(s.set) && s.set >= 0 && s.set < QUIZ_SETS.length &&
+      Number.isInteger(s.q) && s.q >= 0 && s.q < QUIZ_SETS[s.set].questions.length && s.answers && typeof s.answers === 'object';
+  }
+
+  /* ------------------------------------------------------------------
+     Helpers
+     ------------------------------------------------------------------ */
+  const letter = (i) => String.fromCharCode(65 + i);
+  const correctIndex = (q) => q.ans.trim().toUpperCase().charCodeAt(0) - 65;
+  const pad = (n) => String(n).padStart(2, '0');
+  const fmtClock = (s) => pad(Math.floor(s / 60)) + ':' + pad(s % 60);
+  const fmtScore = (n) => { const r = Math.round(n * 100) / 100; return (r < 0 ? '\u2212' : '') + Math.abs(r); };
+  const fmtSigned = (n) => (n < 0 ? '\u2212' : '+') + Math.abs(n);
+  function durationText(s) {
+    const m = Math.floor(s / 60), r = s % 60, parts = [];
+    if (m) parts.push(m + (m === 1 ? ' minute' : ' minutes'));
+    if (r) parts.push(r + ' sec');
+    return parts.join(' ');
+  }
+  function setLabel(i) {
+    const n = i + 1, total = QUIZ_SETS.length;
+    return 'Set ' + n + ' of ' + total + (n === total ? ' <span class="tag">(Last)</span>' : '');
+  }
+  function answersFor(si) {
+    const len = QUIZ_SETS[si].questions.length;
+    if (!Array.isArray(state.answers[si])) state.answers[si] = new Array(len).fill(null);
+    return state.answers[si];
+  }
+  function computeResult(si) {
+    const set = QUIZ_SETS[si], a = answersFor(si);
+    let correct = 0, wrong = 0, skipped = 0;
+    set.questions.forEach(function (q, i) {
+      if (a[i] === null || a[i] === undefined) skipped++;
+      else if (a[i] === correctIndex(q)) correct++;
+      else wrong++;
+    });
+    return {
+      correct: correct, wrong: wrong, skipped: skipped,
+      score: correct * CONFIG.markCorrect + wrong * CONFIG.markWrong,
+      max: set.questions.length * CONFIG.markCorrect
+    };
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('active', s.id === id); });
+  }
+  function openModal(id) {
+    const m = $(id);
+    m.classList.add('open');
+    m.setAttribute('aria-hidden', 'false');
+    const f = m.querySelector('[data-autofocus]');
+    if (f) f.focus();
+  }
+  function closeModal(id) {
+    const m = $(id);
+    m.classList.remove('open');
+    m.setAttribute('aria-hidden', 'true');
+  }
+  function closeAllModals() { ['confirmModal', 'timeModal', 'reviewModal'].forEach(closeModal); }
+
+  /* ------------------------------------------------------------------
+     Timer (based on real clock so it stays accurate; saved every second)
+     ------------------------------------------------------------------ */
+  let timerId = null, endAt = 0;
+
+  function updateTimerUI() {
+    $('timerText').textContent = fmtClock(Math.max(0, state.remaining));
+    $('timerBox').classList.toggle('low', state.remaining <= 30);
+  }
+  function startTimer() {
+    stopTimer();
+    endAt = Date.now() + state.remaining * 1000;
+    updateTimerUI();
+    timerId = setInterval(tick, 250);
+  }
+  function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+  function tick() {
+    const rem = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+    if (rem !== state.remaining) { state.remaining = rem; saveState(); updateTimerUI(); }
+    if (rem <= 0) timeUp();
+  }
+  function timeUp() {
+    if (state.phase !== 'quiz') return;
+    stopTimer();
+    state.remaining = 0;
+    state.phase = 'timeover';
+    saveState();
+    updateTimerUI();
+    openModal('timeModal');
+  }
+  function flushTimer() {
+    if (timerId && state.phase === 'quiz') {
+      state.remaining = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+      saveState();
+    }
+  }
+  window.addEventListener('pagehide', flushTimer);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) flushTimer(); });
+
+  /* ------------------------------------------------------------------
+     Set flow: intro -> quiz -> (submit / time over) -> solution -> next set
+     ------------------------------------------------------------------ */
+  let introTimeout = null;
+
+  function startSet(i) {
+    state.set = i;
+    state.q = 0;
+    state.remaining = QUIZ_SETS[i].timer;
+    state.phase = 'intro';
+    saveState();
+    showIntro();
+  }
+
+  function showIntro() {
+    stopTimer();
+    closeAllModals();
+    const set = QUIZ_SETS[state.set];
+    $('introTitle').innerHTML = setLabel(state.set);
+    $('introSub').textContent = set.questions.length + ' questions, ' + durationText(set.timer);
+    const bar = $('introBar');
+    bar.classList.remove('run');
+    void bar.offsetWidth;
+    bar.firstElementChild.style.animationDuration = CONFIG.introMs + 'ms';
+    bar.classList.add('run');
+    showScreen('introScreen');
+    clearTimeout(introTimeout);
+    introTimeout = setTimeout(beginQuiz, CONFIG.introMs);
+  }
+
+  function beginQuiz() {
+    if (state.phase !== 'intro') return;
+    state.phase = 'quiz';
+    saveState();
+    showQuiz();
+    startTimer();
+  }
+
+  /* ---------------------------- Quiz screen ---------------------------- */
+  function showQuiz() {
+    const set = QUIZ_SETS[state.set];
+    $('quizTitle').innerHTML = setLabel(state.set);
+    $('instrText').innerHTML = set.instruction;
+    
+
+    const dots = $('dots');
+    dots.innerHTML = '';
+    set.questions.forEach(function (_, i) {
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.className = 'dot';
+      d.textContent = i + 1;
+      d.setAttribute('aria-label', 'Go to question ' + (i + 1));
+      d.addEventListener('click', function () { goTo(i); });
+      dots.appendChild(d);
+    });
+
+    updateTimerUI();
+    renderQuestion(null);
+    showScreen('quizScreen');
+  }
+
+  function renderQuestion(direction) {
+    const set = QUIZ_SETS[state.set], q = set.questions[state.q], n = set.questions.length;
+    $('qCount').textContent = 'Question ' + (state.q + 1) + ' of ' + n;
+    $('qText').innerHTML = q.q;
+
+    const list = $('optList');
+    list.innerHTML = '';
+    q.opt.forEach(function (text, i) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'opt';
+      b.innerHTML = '<span class="badge">' + letter(i) + '</span><span class="opt-text">' + text + '</span>';
+      b.addEventListener('click', function () { chooseOption(i); });
+      list.appendChild(b);
+    });
+
+    paintSelection();
+    $('prevBtn').disabled = state.q === 0;
+    $('nextBtn').disabled = state.q === n - 1;
+
+    const body = $('qBody');
+    body.scrollTop = 0;
+    body.classList.remove('swap-next', 'swap-prev');
+    if (direction) { void body.offsetWidth; body.classList.add(direction); }
+  }
+
+  function paintSelection() {
+    const a = answersFor(state.set);
+    document.querySelectorAll('#optList .opt').forEach(function (b, i) {
+      const on = a[state.q] === i;
+      b.classList.toggle('selected', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    document.querySelectorAll('#dots .dot').forEach(function (d, i) {
+      d.classList.toggle('current', i === state.q);
+      d.classList.toggle('answered', i !== state.q && a[i] !== null && a[i] !== undefined);
+    });
+  }
+
+  function chooseOption(i) {
+    if (state.phase !== 'quiz') return;
+    const a = answersFor(state.set);
+    a[state.q] = a[state.q] === i ? null : i;   // tap the chosen option again to clear it
+    saveState();
+    paintSelection();
+  }
+
+  function goTo(i) {
+    if (state.phase !== 'quiz' || i === state.q) return;
+    const dir = i > state.q ? 'swap-next' : 'swap-prev';
+    state.q = i;
+    saveState();
+    renderQuestion(dir);
+  }
+
+  $('prevBtn').addEventListener('click', function () { if (state.q > 0) goTo(state.q - 1); });
+  $('nextBtn').addEventListener('click', function () { if (state.q < QUIZ_SETS[state.set].questions.length - 1) goTo(state.q + 1); });
+
+  $('submitBtn').addEventListener('click', function () {
+    if (state.phase !== 'quiz') return;
+    const total = QUIZ_SETS[state.set].questions.length;
+    const r = computeResult(state.set);
+    const answered = total - r.skipped;
+    $('cfText').textContent = 'You have answered ' + answered + ' of ' + total + ' questions. After you submit, you cannot change your answers.';
+    openModal('confirmModal');
+  });
+  $('cfNo').addEventListener('click', function () { closeModal('confirmModal'); });
+  $('cfYes').addEventListener('click', function () { closeModal('confirmModal'); showSolution(); });
+  $('tmSubmit').addEventListener('click', function () { closeModal('timeModal'); showSolution(); });
+
+  /* --------------------------- Solution screen -------------------------- */
+  function loadSolutionImage(url) {
+    const wrap = $('imgWrap'), img = $('solImg');
+    wrap.classList.remove('loaded', 'failed');
+    if (!url) { wrap.style.display = 'none'; return; }
+    wrap.style.display = '';
+    img.onload = function () { wrap.classList.add('loaded'); };
+    img.onerror = function () { wrap.classList.add('failed'); };
+    img.src = url;
+    if (img.complete && img.naturalWidth > 0) wrap.classList.add('loaded');
+  }
+
+  function countUp(el, to) {
+    if (reducedMotion || to === 0) { el.textContent = fmtScore(to); return; }
+    const dur = 700, t0 = performance.now();
+    (function step(t) {
+      const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmtScore(p < 1 ? to * e : to);
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  function showSolution() {
+    stopTimer();
+    closeAllModals();
+    state.phase = 'solution';
+    saveState();
+
+    const set = QUIZ_SETS[state.set], r = computeResult(state.set);
+    $('solTitle').innerHTML = 'Solution for ' + setLabel(state.set);
+    $('solInstr').innerHTML = set.instruction;
+    $('solExp').innerHTML = set.solutionExp;
+    loadSolutionImage(set.solutionImg);
+
+    $('scoreOf').textContent = '/ ' + fmtScore(r.max);
+    countUp($('scoreNum'), r.score);
+    $('marks').innerHTML =
+      '<span class="chip plus">' + fmtSigned(CONFIG.markCorrect) + ' for each correct answer</span>' +
+      '<span class="chip minus">' + fmtSigned(CONFIG.markWrong) + ' for each wrong answer</span>';
+    $('stCorrect').textContent = r.correct;
+    $('stWrong').textContent = r.wrong;
+    $('stSkipped').textContent = r.skipped;
+    $('nextSetBtn').textContent = state.set < QUIZ_SETS.length - 1 ? 'Next Set' : 'Finish';
+
+    const scroll = document.querySelector('#solutionScreen .scroll');
+    if (scroll) scroll.scrollTop = 0;
+    showScreen('solutionScreen');
+  }
+
+  $('nextSetBtn').addEventListener('click', function () {
+    if (state.set < QUIZ_SETS.length - 1) startSet(state.set + 1);
+    else showFinal();
+  });
+
+  /* ----------------------- Review popup (Show Question) ----------------------- */
+  $('showQBtn').addEventListener('click', function () {
+    const set = QUIZ_SETS[state.set], a = answersFor(state.set);
+    const body = $('rvBody');
+    body.innerHTML = '';
+    set.questions.forEach(function (q, qi) {
+      const ci = correctIndex(q), ui = a[qi];
+      const status = ui === null || ui === undefined ? ['skip', 'Skipped'] : ui === ci ? ['good', 'Correct'] : ['bad', 'Wrong'];
+      let opts = '';
+      q.opt.forEach(function (text, oi) {
+        let cls = '', tag = '';
+        if (oi === ci && oi === ui) { cls = 'is-correct'; tag = 'Your answer and the correct answer'; }
+        else if (oi === ci) { cls = 'is-correct'; tag = 'Correct answer'; }
+        else if (oi === ui) { cls = 'is-wrong'; tag = 'Your answer'; }
+        opts += '<li class="' + cls + '"><span class="badge">' + letter(oi) + '</span><span class="txt">' + text + '</span>' + (tag ? '<em>' + tag + '</em>' : '') + '</li>';
+      });
+      const card = document.createElement('article');
+      card.className = 'rv';
+      card.innerHTML =
+        '<div class="rv-top"><span class="rv-n">Q' + (qi + 1) + '.</span><div class="rv-q">' + q.q + '</div><span class="pill ' + status[0] + '">' + status[1] + '</span></div>' +
+        '<ul class="rv-opts">' + opts + '</ul>' +
+        '<div class="rv-exp"><b>Explanation:</b> ' + q.exp + '</div>';
+      body.appendChild(card);
+    });
+    body.scrollTop = 0;
+    openModal('reviewModal');
+  });
+  $('rvClose').addEventListener('click', function () { closeModal('reviewModal'); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && $('reviewModal').classList.contains('open')) closeModal('reviewModal');
+  });
+
+  /* ---------------------------- Final screen ---------------------------- */
+  function showFinal() {
+    stopTimer();
+    closeAllModals();
+    state.phase = 'final';
+    saveState();
+
+    let rows = '', tc = 0, tw = 0, ts = 0, tScore = 0, tMax = 0;
+    QUIZ_SETS.forEach(function (_, i) {
+      const r = computeResult(i);
+      tc += r.correct; tw += r.wrong; ts += r.skipped; tScore += r.score; tMax += r.max;
+      rows += '<tr><td>Set ' + (i + 1) + '</td><td>' + r.correct + '</td><td>' + r.wrong + '</td><td>' + r.skipped + '</td><td>' + fmtScore(r.score) + ' / ' + fmtScore(r.max) + '</td></tr>';
+    });
+    $('finalRows').innerHTML = rows;
+    $('finalFoot').innerHTML = '<tr><td>Total</td><td>' + tc + '</td><td>' + tw + '</td><td>' + ts + '</td><td>' + fmtScore(tScore) + ' / ' + fmtScore(tMax) + '</td></tr>';
+    $('finalOf').textContent = '/ ' + fmtScore(tMax);
+    countUp($('finalScore'), tScore);
+    showScreen('finalScreen');
+  }
+  $('restartBtn').addEventListener('click', function () {
+    state = freshState();
+    saveState();
+    resume();
+  });
+
+  /* ------------------------------------------------------------------
+     Start-up: continue exactly where the user left off
+     ------------------------------------------------------------------ */
+  function resume() {
+    switch (state.phase) {
+      case 'quiz':
+        if (CONFIG.timerContinuesWhenClosed) {
+          state.remaining = Math.max(0, state.remaining - Math.floor((Date.now() - state.savedAt) / 1000));
+        }
+        showQuiz();
+        if (state.remaining <= 0) { timeUp(); } else { startTimer(); }
+        break;
+      case 'timeover':
+        showQuiz();
+        openModal('timeModal');
+        break;
+      case 'solution':
+        showSolution();
+        break;
+      case 'final':
+        showFinal();
+        break;
+      default:
+        showIntro();
+    }
+  }
+
+  state = loadState();
+  if (!validState(state)) { state = freshState(); saveState(); }
+  resume();
+})();
+</script>
+</body>
+</html>
