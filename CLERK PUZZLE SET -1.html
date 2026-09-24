@@ -122,7 +122,7 @@ button{font-family:inherit}
    QUIZ SCREEN
    ========================================================================== */
 .instr-text{
-  margin:0; font:400 1.45rem/1.65 var(--serif); color:var(--ink);
+  margin:0; font:400 1.05rem/1.65 var(--serif); color:var(--ink);
   border-left:3px solid var(--gold); padding-left:1.1rem;
 }
 .facts{margin:0; padding:1rem 1.4rem; border-top:1px solid var(--line); background:#FAFBFD; display:grid; gap:.55rem}
@@ -144,7 +144,7 @@ button{font-family:inherit}
 .dot.answered{background:var(--navy-tint); border-color:var(--navy-2); color:var(--navy)}
 .dot.current{background:var(--navy); border-color:var(--navy); color:#fff}
 
-.q-text{margin:0 0 1.3rem; font:400 1.55rem/1.5 var(--serif); color:var(--ink)}
+.q-text{margin:0 0 1.3rem; font:400 1.15rem/1.5 var(--serif); color:var(--ink)}
 .opts{display:grid; gap:.7rem}
 .opt{
   display:flex; align-items:center; gap:.95rem; width:100%; text-align:left; padding:.8rem 1rem;
@@ -305,40 +305,40 @@ const demoImg = (label) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
 const QUIZ_SETS = [
   /* ---------------------------- SET 1 ---------------------------- */
   {
-    timer: 180,
-    instruction: "Read the following question carefully and answer the question.",
-    solutionImg: demoImg("Set 1 solution image"),
-    solutionExp: "This set mixes general awareness, number series, classification, coding-decoding and vocabulary. For each type, find the rule first (the size, the gap between numbers, the shared category, the letter shift, the meaning) and only then compare the options.",
+    timer: 210,
+    instruction: "Six persons Maya, Nancy, Om, Piyu, Jack, and Ross sit around equilateral triangular shaped table such that one person each sits at the corner of the table and one person each sit at the side of the table. All of them face towards the centre. Each of them likes different food items among Burger, Pizza, Noodles, Momo, Pasta and Donut.<br><br>Maya, who sits at the side of the table sits adjacent to the one, who likes Pasta. Nancy sits second to the left of the one, who likes Pasta. Only one person sits between Nancy and the one, who likes Pizza. Ross, who likes Momo sits second to the right of the one, who likes Noodles. Piyu sits adjacent to the one, who likes Donut. Nancy doesn't like Burger. Om doesn't sit adjacent to the one, who likes Burger. Jack doesn't sit immediate left of Piyu.",
+    solutionImg: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjZZ6v1gwAVpPTt1uIJcclw3FQO2mxVFX41iRjzf2vh-i24RCNrL7jX1F0cMaCRyMl9VIW37qTlkH7q4eEt9QHBu1DZ2-ur8429ahBdHVEVSJoHtQ0ymXsSS1PjSB-jSP6HxbFKsqiAgaDdDzW-9ER7HcD7VkaQskyathDqSQKpyWYwcV84LyBSYP-P21cL/s1600/Screenshot%202026-09-25%203.12.00%20AM.png',
+    solutionExp: "<strong>Starting Point: <strong><br>Start with Maya, the one, who likes Pasta and Nancy to form the least possible cases.<br><br><br><strong>Clues:<strong><br>1) Maya, who sits at the side of the table sits adjacent to the one, who likes Pasta.<br>2) Nancy sits second to the left of the one, who likes Pasta.<br>3) Only one person sits between Nancy and the one, who likes Pizza.<br><br><strong>Inferences:<strong><br>From clue 1, Maya sits either immediate right or immediate left of the one, who likes Pasta. The one, who likes Pasta sits at the corner.<br>From clue 2, Nancy sits either third to the left or immediate left of Maya.<br>From clue 3, the one, who likes Pizza sits second to the left of Nancy.<br>Case 1: When Maya sits immediate right of the one, who likes Pasta.<br>Case 2: When Maya sits immediate left of the one, who likes Pasta.<br><strong>Clues:<strong><br>1) Ross, who likes Momo sits second to the right of the one, who likes Noodles.<br>2) Piyu sits adjacent to the one, who likes Donut.<br>3) Nancy doesn't like Burger. Om doesn't sit adjacent to the one, who likes Burger.<br>4) Jack doesn't sit immediate left of Piyu.<br><br><strong>Inferences:<strong><br>From clue 1, in case 1 and case 2, Ross sits either second to the left or second to the right of Maya and the one, who likes Noodles sits either second to the right of Maya or Maya likes Noodles.<br>From clues 2 and 3, in case 1, Piyu likes either Noodles or Burger and Nancy likes Donut. In case 2, Piyu likes Burger and Nancy likes Donut.<br>From clue 4, case 2 gets eliminated as we can't place Jack in the arrangement. <br>In case 1, Piyu likes Burger, Om likes Pizza and Jack likes Pasta.Therefore, this is the final arrangement ",
     questions: [
       {
-        q: "Which of the following is the largest ocean on Earth?",
-        opt: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean", "Southern Ocean"],
+        q: "Who among the following like burger ?",
+        opt: ["Jack", "Maya", "Om", "Piyu", "cannot be determined"],
         ans: "D",
-        exp: "The Pacific Ocean covers about one third of the Earth's surface, more than all the land combined."
+        exp: "Piyu loikes Burger."
       },
       {
-        q: "Complete the series: 2, 6, 12, 20, 30, ?",
-        opt: ["36", "40", "42", "44", "48"],
-        ans: "C",
-        exp: "The differences are 4, 6, 8, 10, so the next difference is 12. 30 + 12 = 42. (The terms are n × (n + 1).)"
-      },
-      {
-        q: "Which word is the odd one out?",
-        opt: ["Apple", "Mango", "Carrot", "Banana", "Grapes"],
-        ans: "C",
-        exp: "Apple, mango, banana and grapes are fruits. Carrot is a vegetable."
-      },
-      {
-        q: "If FRIEND is written as GSJFOE, how is SCHOOL written in the same code?",
-        opt: ["TDIPPM", "TDIOPM", "RBGNNK", "TDHPPM", "UEKQQN"],
+        q: "Who among the following sits third to the right of Ross?",
+        opt: ["The one, who likes Pasta", "The one, who likes Noodles", "The one, who likes Burger", "The one, who likes Pizza", "The one, who likes Donut"],
         ans: "A",
-        exp: "Each letter moves one step forward: F→G, R→S, I→J, E→F, N→O, D→E. Applying this to SCHOOL gives T-D-I-P-P-M."
+        exp: "The one who likes pasta sits third to the right of Ross."
       },
       {
-        q: "Choose the word closest in meaning to <b>RAPID</b>.",
-        opt: ["Slow", "Swift", "Gentle", "Heavy", "Silent"],
+        q: "How many persons sit between the one, who likes Burger and the one, who likes Momo, when counted from the left of the one, who likes Burger?",
+        opt: ["2", "3", "None", "1", "Cannot be determined"],
+        ans: "D",
+        exp: "Only one person sits between the one, who likes Burger and the one, who likes Momo,when counted from the left of the one, who likes Burger."
+      },
+      {
+        q: "Who among the following likes Pizza?",
+        opt: ["The one, who  sits second to the left of Om", "The one, who  sits second to the right of Jack", "The one, who  sits immediate right of Ross", "The one, who  sits third to the left of Maya", "None of the above"],
         ans: "B",
-        exp: "Rapid means happening quickly. Swift is the closest synonym; slow is its opposite."
+        exp: "The one , who sits second to the right of jack like pizza."
+      },
+      {
+        q: "________, Who likes donut, sits immediate ________ of ________.",
+        opt: ["nancy, right,jack", "maya left Om", "maya, right, piyu", "nancy, left, piyu", "maya, right, jack"],
+        ans: "D",
+        exp: "Nancy who like Donut, sits immediate left of piyu."
       }
     ]
   },
