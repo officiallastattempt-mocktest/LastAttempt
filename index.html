@@ -1,51 +1,224 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LastAttempt</title>
+<style>
+:root{--bg:#eef3f8;--card:#fff;--ink:#0f2236;--side:#0b3d5c;--sideink:#d6e8f5;--acc:#ff7a1a;--line:#dbe4ee;--mut:#5d7186;box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0d1621;--card:#16222f;--ink:#e8f0f7;--side:#08283d;--line:#263646;--mut:#8fa3b6}}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{position:absolute;inset:0;display:flex}
+@media (orientation:portrait){#app{inset:auto;top:0;left:100vw;width:100vh;height:100vw;transform-origin:top left;transform:rotate(90deg)}}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;text-align:left}
+aside{width:26%;max-width:34vmin;background:var(--side);color:var(--sideink);display:flex;flex-direction:column;gap:1vmin;padding:max(env(safe-area-inset-top),2vmin) 2vmin 2vmin max(env(safe-area-inset-left),2vmin)}
+.brand{font-size:3.6vmin;font-weight:800;color:#fff;line-height:1.1;margin-bottom:2vmin;cursor:pointer}
+.brand span{color:var(--acc)}
+.brand small{display:block;font-size:1.8vmin;font-weight:400;color:var(--sideink);margin-top:.6vmin}
+.nav{padding:1.6vmin 1.8vmin;border-radius:10px;font-size:2.6vmin;font-weight:600;display:flex;justify-content:space-between;align-items:center;transition:.15s}
+.nav i{font-style:normal;font-size:1.6vmin;opacity:.7;font-weight:400}
+.nav:hover{background:rgba(255,255,255,.08)}
+.nav.on{background:var(--acc);color:#fff}
+section{flex:1;min-width:0;display:flex;flex-direction:column;padding:max(env(safe-area-inset-top),2vmin) max(env(safe-area-inset-right),3vmin) 2.4vmin 3vmin}
+h1{font-size:4.2vmin}
+.sub{color:var(--mut);font-size:2.2vmin;margin:.6vmin 0 1.8vmin}
+.tabs{display:flex;gap:1vmin;margin-bottom:2vmin}
+.tab{padding:1.2vmin 2.2vmin;border-radius:99px;border:1.5px solid var(--line);background:var(--card);font-size:2.2vmin;font-weight:600}
+.tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.body{flex:1;min-height:0;display:flex;animation:f .25s}
+@keyframes f{from{opacity:0;transform:translateX(1.5vmin)}}
+.grid{flex:1;display:grid;gap:2vmin;grid-template-columns:repeat(var(--n,3),1fr);align-content:start}
+.card{background:var(--card);border:1px solid var(--line);border-left:1vmin solid var(--acc);border-radius:12px;padding:2.4vmin;font-size:2.8vmin;font-weight:700;min-height:20vmin;display:flex;flex-direction:column;justify-content:space-between;transition:.15s}
+.card small{font-size:2vmin;font-weight:400;color:var(--mut)}
+.card b{color:var(--acc);font-size:2.2vmin}
+.card:hover,.card:active{transform:translateY(-.5vmin);box-shadow:0 8px 18px rgba(0,0,0,.12)}
+.cols{flex:1;display:grid;gap:1.8vmin;grid-template-columns:repeat(var(--n,3),1fr);min-height:0}
+.col{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.4vmin;display:flex;flex-direction:column;gap:1vmin;min-height:0}
+.col h3{font-size:2.3vmin;color:var(--acc);text-transform:uppercase;letter-spacing:.2vmin}
+.list{overflow-y:auto;display:flex;flex-direction:column;gap:.8vmin}
+.chip{padding:1.2vmin 1.4vmin;border-radius:8px;background:var(--bg);font-size:2.1vmin;font-weight:500}
+.chip:hover,.chip:active{background:var(--acc);color:#fff}
+#toast{position:absolute;left:55%;bottom:3vmin;transform:translate(-50%,12vmin);background:var(--ink);color:var(--bg);padding:1.2vmin 2.4vmin;border-radius:8px;font-size:2vmin;transition:.3s}
+#toast.s{transform:translate(-50%,0)}
+</style></head><body>
+<div id="app">
+<aside id="side"></aside>
+<section><h1 id="h"></h1><div class="sub" id="s"></div><div class="tabs" id="t"></div><div class="body" id="b"></div></section>
+<div id="toast"></div></div>
+<script>
+// ====== PASTE YOUR LINKS BETWEEN THE QUOTES ("") ======
+const LINKS={
+ // ===== CLERK PRE =====
+ "Clerk Pre/Full":"",
+ // Sectional
+ "Clerk Pre/Sectional/Quant":"",
+ "Clerk Pre/Sectional/Reasoning":"",
+ "Clerk Pre/Sectional/English":"",
+ // Topic-wise
+ // Quant
+ "Clerk Pre/Topic/Quant/Arithmetic":"",
+ "Clerk Pre/Topic/Quant/DI":"",
+ "Clerk Pre/Topic/Quant/Number Series":"",
+ "Clerk Pre/Topic/Quant/Simplification":"",
+ "Clerk Pre/Topic/Quant/Quadratic Equation":"",
+ "Clerk Pre/Topic/Quant/Data Sufficiency":"",
+ // Reasoning
+ "Clerk Pre/Topic/Reasoning/Puzzles":"",
+ "Clerk Pre/Topic/Reasoning/Syllogism":"",
+ "Clerk Pre/Topic/Reasoning/Inequalities":"",
+ "Clerk Pre/Topic/Reasoning/Seating Arrangement":"",
+ "Clerk Pre/Topic/Reasoning/Blood Relations":"",
+ "Clerk Pre/Topic/Reasoning/Coding-Decoding":"",
+ "Clerk Pre/Topic/Reasoning/Direction Sense":"",
+ // English
+ "Clerk Pre/Topic/English/RC":"",
+ "Clerk Pre/Topic/English/Error Spotting":"",
+ "Clerk Pre/Topic/English/Cloze Test":"",
+ "Clerk Pre/Topic/English/Para Jumbles":"",
+ "Clerk Pre/Topic/English/Fill in the Blanks":"",
+ "Clerk Pre/Topic/English/Vocabulary":"",
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+ // ===== CLERK MAINS =====
+ "Clerk Mains/Full":"",
+ // Sectional
+ "Clerk Mains/Sectional/Quant":"",
+ "Clerk Mains/Sectional/Reasoning":"",
+ "Clerk Mains/Sectional/English":"",
+ "Clerk Mains/Sectional/Current Affairs":"",
+ // Topic-wise
+ // Quant
+ "Clerk Mains/Topic/Quant/Arithmetic":"",
+ "Clerk Mains/Topic/Quant/DI":"",
+ "Clerk Mains/Topic/Quant/Number Series":"",
+ "Clerk Mains/Topic/Quant/Simplification":"",
+ "Clerk Mains/Topic/Quant/Quadratic Equation":"",
+ "Clerk Mains/Topic/Quant/Data Sufficiency":"",
+ // Reasoning
+ "Clerk Mains/Topic/Reasoning/Puzzles":"",
+ "Clerk Mains/Topic/Reasoning/Syllogism":"",
+ "Clerk Mains/Topic/Reasoning/Inequalities":"",
+ "Clerk Mains/Topic/Reasoning/Seating Arrangement":"",
+ "Clerk Mains/Topic/Reasoning/Blood Relations":"",
+ "Clerk Mains/Topic/Reasoning/Coding-Decoding":"",
+ "Clerk Mains/Topic/Reasoning/Direction Sense":"",
+ // English
+ "Clerk Mains/Topic/English/RC":"",
+ "Clerk Mains/Topic/English/Error Spotting":"",
+ "Clerk Mains/Topic/English/Cloze Test":"",
+ "Clerk Mains/Topic/English/Para Jumbles":"",
+ "Clerk Mains/Topic/English/Fill in the Blanks":"",
+ "Clerk Mains/Topic/English/Vocabulary":"",
+ // Current Affairs
+ "Clerk Mains/Topic/Current Affairs/January Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/February Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/March Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/April Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/May Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/June Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/July Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/August Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/September Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/October Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/November Current Affairs":"",
+ "Clerk Mains/Topic/Current Affairs/December Current Affairs":"",
 
-        body {
-            /* Fallback and dynamic viewport height fix for landscape mode */
-            min-height: 100vh;
-            min-height: 100dvh; 
-            display: grid;
-            place-items: center;
-            background-color: #f9f9f9;
-        }
+ // ===== PO PRE =====
+ "PO Pre/Full":"",
+ // Sectional
+ "PO Pre/Sectional/Quant":"",
+ "PO Pre/Sectional/Reasoning":"",
+ "PO Pre/Sectional/English":"",
+ // Topic-wise
+ // Quant
+ "PO Pre/Topic/Quant/Arithmetic":"",
+ "PO Pre/Topic/Quant/DI":"",
+ "PO Pre/Topic/Quant/Number Series":"",
+ "PO Pre/Topic/Quant/Simplification":"",
+ "PO Pre/Topic/Quant/Quadratic Equation":"",
+ "PO Pre/Topic/Quant/Data Sufficiency":"",
+ // Reasoning
+ "PO Pre/Topic/Reasoning/Puzzles":"",
+ "PO Pre/Topic/Reasoning/Syllogism":"",
+ "PO Pre/Topic/Reasoning/Inequalities":"",
+ "PO Pre/Topic/Reasoning/Seating Arrangement":"",
+ "PO Pre/Topic/Reasoning/Blood Relations":"",
+ "PO Pre/Topic/Reasoning/Coding-Decoding":"",
+ "PO Pre/Topic/Reasoning/Direction Sense":"",
+ // English
+ "PO Pre/Topic/English/RC":"",
+ "PO Pre/Topic/English/Error Spotting":"",
+ "PO Pre/Topic/English/Cloze Test":"",
+ "PO Pre/Topic/English/Para Jumbles":"",
+ "PO Pre/Topic/English/Fill in the Blanks":"",
+ "PO Pre/Topic/English/Vocabulary":"",
 
-        .puzzle-link {
-            text-decoration: none;
-        }
-
-        .puzzle-btn {
-            padding: 12px 24px;
-            font-size: 16px;
-            background-color: #524EEB;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .puzzle-btn:hover {
-            background-color: #e69500;
-        }
-    </style>
-    <title>Positioning Centering</title>
-</head>
-
-<body>
-    <a href="clerkmains.html" class="puzzle-link">
-        <button type="button" class="puzzle-btn">CLERK Mains Topic Wise</button>
-    </a>
-</body>
-
-</html>
+ // ===== PO MAINS =====
+ "PO Mains/Full":"",
+ // Sectional
+ "PO Mains/Sectional/Quant":"",
+ "PO Mains/Sectional/Reasoning":"",
+ "PO Mains/Sectional/English":"",
+ "PO Mains/Sectional/Current Affairs":"",
+ // Topic-wise
+ // Quant
+ "PO Mains/Topic/Quant/Arithmetic":"",
+ "PO Mains/Topic/Quant/DI":"",
+ "PO Mains/Topic/Quant/Number Series":"",
+ "PO Mains/Topic/Quant/Simplification":"",
+ "PO Mains/Topic/Quant/Quadratic Equation":"",
+ "PO Mains/Topic/Quant/Data Sufficiency":"",
+ // Reasoning
+ "PO Mains/Topic/Reasoning/Puzzles":"",
+ "PO Mains/Topic/Reasoning/Syllogism":"",
+ "PO Mains/Topic/Reasoning/Inequalities":"",
+ "PO Mains/Topic/Reasoning/Seating Arrangement":"",
+ "PO Mains/Topic/Reasoning/Blood Relations":"",
+ "PO Mains/Topic/Reasoning/Coding-Decoding":"",
+ "PO Mains/Topic/Reasoning/Direction Sense":"",
+ // English
+ "PO Mains/Topic/English/RC":"",
+ "PO Mains/Topic/English/Error Spotting":"",
+ "PO Mains/Topic/English/Cloze Test":"",
+ "PO Mains/Topic/English/Para Jumbles":"",
+ "PO Mains/Topic/English/Fill in the Blanks":"",
+ "PO Mains/Topic/English/Vocabulary":"",
+ // Current Affairs
+ "PO Mains/Topic/Current Affairs/January Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/February Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/March Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/April Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/May Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/June Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/July Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/August Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/September Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/October Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/November Current Affairs":"",
+ "PO Mains/Topic/Current Affairs/December Current Affairs":"",
+};
+const EXAMS=[["Clerk Pre",0],["Clerk Mains",1],["PO Pre",0],["PO Mains",1]];
+const SEC={Quant:["Arithmetic","DI","Number Series","Simplification","Quadratic Equation","Data Sufficiency"],
+Reasoning:["Puzzles","Syllogism","Inequalities","Seating Arrangement","Blood Relations","Coding-Decoding","Direction Sense"],
+English:["RC","Error Spotting","Cloze Test","Para Jumbles","Fill in the Blanks","Vocabulary"]};
+const CA=["January","February","March","April","May","June","July","August","September","October","November","December"].map(m=>m+" Current Affairs");
+let ex=null,tab="Full";
+const $=id=>document.getElementById(id);
+const el=(t,c,h,f)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;if(f)e.onclick=f;return e};
+function leaf(k){const u=LINKS[k];if(u)window.open(u,"_blank");else{const e=$("toast");e.textContent="Coming Soon: "+k;e.className="s";setTimeout(()=>e.className="",2200)}}
+function secs(m){const s=Object.entries(SEC);if(m)s.push(["Current Affairs",CA]);return s}
+function render(){
+const s=$("side");s.innerHTML="";
+s.append(el("div","brand","Last<span>Attempt</span>",()=>{ex=null;render()}));
+EXAMS.forEach(e=>s.append(el("button","nav"+(ex&&ex[0]==e[0]?" on":""),`${e[0]}<i>${e[1]?"MAINS":"PRE"}</i>`,()=>{ex=e;tab="Full";render()})));
+const b=$("b"),t=$("t");b.innerHTML="";t.innerHTML="";b.style.animation="none";b.offsetWidth;b.style.animation="";
+if(!ex){$("h").textContent="Welcome back";$("s").textContent="Choose an exam to start practising.";
+const g=el("div","grid");g.style.setProperty("--n",4);EXAMS.forEach(e=>g.append(el("button","card",`${e[0]}<small>${e[1]?"Mains examination":"Preliminary examination"}</small><b>Start &rarr;</b>`,()=>{ex=e;tab="Full";render()})));b.append(g);return}
+$("h").textContent=ex[0];$("s").textContent=ex[1]?"Mains · includes Current Affairs":"Prelims practice";
+["Full","Sectional","Topic-wise"].forEach(n=>t.append(el("button","tab"+(tab==n?" on":""),n=="Full"?"Full Mock Tests":n=="Sectional"?"Sectional Mock Tests":"Topic-wise Tests",()=>{tab=n;render()})));
+if(tab=="Full"){const g=el("div","grid");g.style.setProperty("--n",3);g.append(el("button","card",`Full Mock Tests<small>Complete exam pattern, timed</small><b>Open &rarr;</b>`,()=>leaf(ex[0]+"/Full")));b.append(g)}
+else if(tab=="Sectional"){const g=el("div","grid");const s=secs(ex[1]);g.style.setProperty("--n",Math.min(s.length,4));
+s.forEach(([n])=>g.append(el("button","card",`${n}<small>Sectional mock</small><b>Open &rarr;</b>`,()=>leaf(ex[0]+"/Sectional/"+n))));b.append(g)}
+else{const g=el("div","cols");const s=secs(ex[1]);g.style.setProperty("--n",s.length);
+s.forEach(([n,l])=>{const c=el("div","col",`<h3>${n}</h3>`),L=el("div","list");l.forEach(x=>L.append(el("button","chip",x,()=>leaf(ex[0]+"/Topic/"+n+"/"+x))));c.append(L);g.append(c)});b.append(g)}}
+document.addEventListener("click",()=>{try{screen.orientation.lock("landscape").catch(()=>{})}catch(e){}},{once:true});
+render();
+</script></body></html>
