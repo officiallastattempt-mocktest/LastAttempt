@@ -99,7 +99,7 @@ const EXAMS=[["Clerk Pre",0],["Clerk Mains",1],["PO Pre",0],["PO Mains",1]];
 let ex=null,tab="Full";
 const $=id=>document.getElementById(id);
 const el=(t,c,h,f)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;if(f)e.onclick=f;return e};
-function leaf(k){const u=LINKS[k];if(u)window.open(u,"_blank");else{const e=$("toast");e.textContent="Add link for: "+k;e.className="s";setTimeout(()=>e.className="",2200)}}
+function leaf(k){const u=LINKS[k];if(u)window.open(u,"_blank");else{const e=$("toast");e.textContent="Coming Soon: "+k;e.className="s";setTimeout(()=>e.className="",2200)}}
 function secs(m){return ["Quant","Reasoning","English"].concat(m?["Current Affairs"]:[])}
 function render(){
 const s=$("side");s.innerHTML="";
